@@ -4,7 +4,7 @@ require 'googleauth/stores/file_token_store'
 
 require 'fileutils'
 
-OOB_URI = 'http://localhost:3000/oauth2callback'#'urn:ietf:wg:oauth:2.0:oob'
+OOB_URI = 'urn:ietf:wg:oauth:2.0:oob'
 APPLICATION_NAME = 'Google Calendar API Ruby Quickstart'
 CLIENT_SECRETS_PATH = 'client_secret.json'
 CREDENTIALS_PATH = File.join(Dir.home, '.credentials',
@@ -39,11 +39,34 @@ def authorize
   credentials
 end
 
+def synchronize
+  #download information about upcoming event for next 2 weeks
+#   calendar_id = 'primary'
+#   response = service.list_events(calendar_id,
+#                                  max_results: 10,
+#                                  single_events: true,
+#                                  order_by: 'startTime',
+#                                  time_min: Time.now.iso8601)
+# response.items.each do |event|
+#   date = Calendar.create([{ start: event.start_time, 
+#                             end: event.end_time
+#                              #timezone: event.timeZone 
+#                             }])
+ body = Google::Apis::CalendarV3::FreeBusyRequest.new 
+ body.items = [calendar_id]
+ body.time_min = "2016-07-06T10:00:00z"
+ body.time_max = "2016-07-29T21:00:00z"
+ body
+
+ service.query_freebusy(body)
+
+end
 # Initialize the API
 service = Google::Apis::CalendarV3::CalendarService.new
 service.client_options.application_name = APPLICATION_NAME
 service.authorization = authorize
 
+synchronize
 # Fetch the next 10 events for the user
 calendar_id = 'primary'
 response = service.list_events(calendar_id,
