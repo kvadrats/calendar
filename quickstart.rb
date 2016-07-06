@@ -52,13 +52,13 @@ def synchronize
 #                             end: event.end_time
 #                              #timezone: event.timeZone 
 #                             }])
- body = Google::Apis::CalendarV3::FreeBusyRequest.new 
- body.items = [calendar_id]
- body.time_min = "2016-07-06T10:00:00z"
- body.time_max = "2016-07-29T21:00:00z"
- body
+#  body = Google::Apis::CalendarV3::FreeBusyRequest.new 
+#  body.items = [calendar_id]
+#  body.time_min = "2016-07-06T10:00:00z"
+#  body.time_max = "2016-07-29T21:00:00z"
+#  body
 
- service.query_freebusy(body)
+#  service.query_freebusy(body)
 
 end
 # Initialize the API
@@ -66,11 +66,11 @@ service = Google::Apis::CalendarV3::CalendarService.new
 service.client_options.application_name = APPLICATION_NAME
 service.authorization = authorize
 
-synchronize
+#synchronize
 # Fetch the next 10 events for the user
 calendar_id = 'primary'
 response = service.list_events(calendar_id,
-                               max_results: 10,
+                               max_results: 20,
                                single_events: true,
                                order_by: 'startTime',
                                time_min: Time.now.iso8601)
@@ -79,5 +79,10 @@ puts "Upcoming events:"
 puts "No upcoming events found" if response.items.empty?
 response.items.each do |event|
   start = event.start.date || event.start.date_time
+   date = Calendar.create([{ start: event.start.date || event.start.date_time, 
+                             end: event.end.date || event.end.date_time,
+                             timezone: event.timeZone,
+                             summary: event.summary
+                            }])
   puts "- #{event.summary} (#{start})"
 end

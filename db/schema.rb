@@ -11,12 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160706105636) do
+ActiveRecord::Schema.define(version: 20160706224036) do
 
   create_table "calendars", force: :cascade do |t|
     t.datetime "start"
     t.datetime "end"
     t.string   "timezone"
+    t.string   "summary"
   end
 
 end
